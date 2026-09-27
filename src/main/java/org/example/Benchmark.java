@@ -132,6 +132,7 @@ public class Benchmark {
         long arrayRemoveTime = 0;
         long listInsertTime = 0;
         long listRemoveTime = 0;
+        int actualRemovals = Math.min(1000, n);
 
         for (int r = 0; r < REPEATS; r++) {
             DynamicArray arrayForInsert = new DynamicArray();
@@ -143,7 +144,10 @@ public class Benchmark {
             DynamicArray arrayForRemove = new DynamicArray();
             for (int v : values) arrayForRemove.add(v);
             start = System.nanoTime();
-            for (int i = 0; i < 1000; i++) arrayForRemove.remove(position);
+            for (int i = 0; i < actualRemovals && !arrayForRemove.isEmpty(); i++) {
+                int removeIndex = Math.min(position, arrayForRemove.size() - 1);
+                arrayForRemove.remove(removeIndex);
+            }
             arrayRemoveTime += System.nanoTime() - start;
 
             LinkedList listForInsert = new LinkedList();
@@ -155,7 +159,10 @@ public class Benchmark {
             LinkedList listForRemove = new LinkedList();
             for (int v : values) listForRemove.add(v);
             start = System.nanoTime();
-            for (int i = 0; i < 1000; i++) listForRemove.remove(position);
+            for (int i = 0; i < actualRemovals && !listForRemove.isEmpty(); i++) {
+                int removeIndex = Math.min(position, listForRemove.size() - 1);
+                listForRemove.remove(removeIndex);
+            }
             listRemoveTime += System.nanoTime() - start;
         }
 
@@ -167,13 +174,14 @@ public class Benchmark {
         long movements = (long) (n - position) * 1000;
 
         writer.println(n + ",DynamicArray,insert," + label + "," + arrayInsertTime + "," + movements);
-        writer.println(n + ",DynamicArray,remove," + label + "," + arrayRemoveTime + "," + movements);
+        writer.println(n + ",DynamicArray,remove," + label + "," + arrayRemoveTime + "," + ((long) position * actualRemovals));
         writer.println(n + ",LinkedList,insert," + label + "," + listInsertTime + "," + ((long) position * 1000));
-        writer.println(n + ",LinkedList,remove," + label + "," + listRemoveTime + "," + ((long) position * 1000));
+        writer.println(n + ",LinkedList,remove," + label + "," + listRemoveTime + "," + ((long) position * actualRemovals));
 
         System.out.println("Workload3 n=" + n + " pos=" + label
                 + " ArrayInsert=" + arrayInsertTime + " ArrayRemove=" + arrayRemoveTime
-                + " ListInsert=" + listInsertTime + " ListRemove=" + listRemoveTime);
+                + " ListInsert=" + listInsertTime + " ListRemove=" + listRemoveTime
+                + " (actualRemovals=" + actualRemovals + ")");
     }
 
     private static void runWorkload4() throws IOException {
