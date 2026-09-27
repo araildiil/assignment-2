@@ -57,6 +57,15 @@ public class DynamicArray {
         }
         return false;
     }
+    public boolean contains(Object x, long[] comparisons) {
+        for (int i = 0; i < size; i++) {
+            comparisons[0]++;
+            if (data[i] == null ? x == null : data[i].equals(x)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void ensureCapacity(int minCapacity) {
         if (minCapacity > data.length) {

@@ -21,9 +21,13 @@ public class MinHeap {
     }
 
     public void insert(Comparable x) {
+        insert(x, null);
+    }
+
+    public void insert(Comparable x, long[] comparisons) {
         ensureCapacity(size + 1);
         data[size] = x;
-        siftUp(size);
+        siftUp(size, comparisons);
         size++;
     }
 
@@ -35,6 +39,10 @@ public class MinHeap {
     }
 
     public Object extractMin() {
+        return extractMin(null);
+    }
+
+    public Object extractMin(long[] comparisons) {
         if (isEmpty()) {
             throw new java.util.NoSuchElementException("Heap is empty");
         }
@@ -43,14 +51,15 @@ public class MinHeap {
         data[0] = data[size];
         data[size] = null;
         if (size > 0) {
-            siftDown(0);
+            siftDown(0, comparisons);
         }
         return min;
     }
 
-    private void siftUp(int index) {
+    private void siftUp(int index, long[] comparisons) {
         while (index > 0) {
             int parent = (index - 1) / 2;
+            if (comparisons != null) comparisons[0]++;
             if (compare(data[index], data[parent]) < 0) {
                 swap(index, parent);
                 index = parent;
@@ -60,17 +69,23 @@ public class MinHeap {
         }
     }
 
-    private void siftDown(int index) {
+    private void siftDown(int index, long[] comparisons) {
         while (true) {
             int left = 2 * index + 1;
             int right = 2 * index + 2;
             int smallest = index;
 
-            if (left < size && compare(data[left], data[smallest]) < 0) {
-                smallest = left;
+            if (left < size) {
+                if (comparisons != null) comparisons[0]++;
+                if (compare(data[left], data[smallest]) < 0) {
+                    smallest = left;
+                }
             }
-            if (right < size && compare(data[right], data[smallest]) < 0) {
-                smallest = right;
+            if (right < size) {
+                if (comparisons != null) comparisons[0]++;
+                if (compare(data[right], data[smallest]) < 0) {
+                    smallest = right;
+                }
             }
             if (smallest == index) {
                 break;

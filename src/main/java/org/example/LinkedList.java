@@ -104,6 +104,17 @@ public class LinkedList {
         }
         return false;
     }
+    public boolean contains(Object x, long[] comparisons) {
+        Node current = head;
+        while (current != null) {
+            comparisons[0]++;
+            if (current.value == null ? x == null : current.value.equals(x)) {
+                return true;
+            }
+            current = current.next;
+        }
+        return false;
+    }
 
     private Node getNode(int index) {
         Node current = head;
